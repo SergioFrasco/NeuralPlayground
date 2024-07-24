@@ -206,6 +206,8 @@ class LevyFlightAgent(RandomAgent):
         self.max_step_size = max_step_size
         self.action_buffer = []
 
+    
+
     def _act(self, obs):
         """Auxiliary action method to compute
 
@@ -261,3 +263,47 @@ class LevyFlightAgent(RandomAgent):
                 return self.action_buffer.pop()
             else:
                 return action
+            
+
+# My own discrete agent
+class DiscreteAgent(AgentCore):
+    """Agent that moves discretely in the environment"""
+    
+    def __init__(self, agent_name="discrete_agent", step_size=1):
+        super().__init__(agent_name=agent_name, agent_step_size=step_size)
+        self.actions = {
+            0: np.array([0, 20]),    # up
+            1: np.array([0, -20]),   # down
+            2: np.array([-20, 0]),   # left
+            3: np.array([120, 0])     # right
+        }
+
+    def act(self, obs, policy_func=None):
+        """
+        Chooses an action based on the observation. By default, selects a random discrete action.
+        Parameters
+        ----------
+        obs
+            Observation from the environment class needed to choose the right action
+        policy_func
+            Arbitrary function that represents a custom policy that receives an observation and gives an action
+        Returns
+        -------
+        action: np.array(dtype=int)
+            Discrete action represented as a vector in the grid
+        """
+        if len(obs) == 0:
+            action = None
+        else:
+            if policy_func is not None:
+                action = policy_func(obs)
+            else:
+                action_index = np.random.choice(list(self.actions.keys()))
+                action = self.actions[action_index]
+        
+        self.obs_history.append(obs)
+        if len(self.obs_history) >= 1000:  # reset every 1000
+            self.obs_history = [obs]
+
+        return action
+

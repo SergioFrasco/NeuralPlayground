@@ -8,3 +8,4 @@ from .wernle_2018 import Wernle2018, MergingRoom
 from .batch_environment import BatchEnvironment
 from .discritized_objects import DiscreteObjectEnvironment
 from .sutton_1999 import sutton_1999
+from .sutton_1999_discrete import Sutton1999Discrete
