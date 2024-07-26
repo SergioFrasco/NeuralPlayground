@@ -46,8 +46,8 @@ class sutton_1999(Simple2D):
         """
         self.reward_map = {
             # Define specific rewards for certain states
-            (-60, 60): 10.0,  # Example: State (x1, y1) has a reward of 10.0
-            (60, 60): 5.0,   # Example: State (x2, y2) has a reward of 5.0
+            (-60, 60): 100.0,  # Example: State (x1, y1) has a reward of 10.0
+            (60, 60): 100.0,   # Example: State (x2, y2) has a reward of 5.0
         }
         self.default_negative_reward = -1  # Slightly negative reward for other states
 
@@ -137,6 +137,14 @@ class sutton_1999(Simple2D):
         """
         # Convert state to a hashable type if needed
         state_tuple = tuple(state)  # Assuming state is a list or ndarray
+
+        templist = list(state_tuple)
+        templist[0] = round(templist[0], 0)
+        templist[1] = round(templist[1], 0)
+
+        state_tuple = tuple(templist)
+
+        # print(state_tuple)
 
         # Check if the state is in the reward map
         if state_tuple in self.reward_map:
