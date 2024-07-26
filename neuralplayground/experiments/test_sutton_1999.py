@@ -1,39 +1,46 @@
 from IPython.display import display, HTML
 display(HTML("<style>.container { width:80% !important; }</style>"))
+
 import numpy as np
 import matplotlib.pyplot as plt
+from neuralplayground.arenas import sutton_1999
+from neuralplayground.agents import QLearningAgent
 
-from neuralplayground.arenas import Simple2D, ConnectedRooms, sutton_1999
-
-from neuralplayground.agents import RandomAgent, LevyFlightAgent
-
-
-# Random agent generates a brownian motion. Levy flight is still experimental.
-agent = LevyFlightAgent(step_size=0.8, scale=2.0, loc=0.0, beta=1.0, alpha=0.5, max_action_size=100)
-
-time_step_size = 0.1 #seg
-agent_step_size = 3
-
-# # Init environment
-# env = Simple2D(time_step_size = time_step_size,
-#                agent_step_size = agent_step_size,
-#                arena_x_limits=(-100, 100), 
-#                arena_y_limits=(-100, 100))
-
+# Define action mappings
+action_mappings = {
+    'up': np.array([0, 10]),
+    'down': np.array([0, -10]),
+    'left': np.array([-10, 0]),
+    'right': np.array([10, 0])
+}
 
 # Init environment
-env = sutton_1999(time_step_size = time_step_size,
-                     agent_step_size = agent_step_size)
+time_step_size = 0.1  # sec
+agent_step_size = 3
 
-n_steps = 3000#30000
+env = sutton_1999(time_step_size=time_step_size, agent_step_size=agent_step_size)
+
+# Define state space as continuous range normalized to [0, 1]
+state_space = [(x / 100.0, y / 100.0) for x in range(-100, 101) for y in range(-100, 101)]
+actions = ['up', 'down', 'left', 'right']
+
+# Create the QLearningAgent
+agent = QLearningAgent(state_space=state_space, actions=actions, state_bins=10)
+
+# Number of steps to simulate
+n_steps = 3000
 
 # Initialize environment
 obs, state = env.reset()
 for i in range(n_steps):
     # Observe to choose an action
     action = agent.act(obs)
+    # Convert action to numerical vector
+    action_vector = action_mappings[action]
     # Run environment for given action
-    obs, state, reward = env.step(action)
+    obs, state, reward = env.step(action_vector)
+    # Update Q-table based on action outcome
+    agent.update_q_table(state, action, reward, obs)
 
 ax = env.plot_trajectory()
 ax.grid()
