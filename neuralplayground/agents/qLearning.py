@@ -2,7 +2,7 @@ import numpy as np
 from neuralplayground.agents import AgentCore
 
 class QLearningAgent(AgentCore):
-    def __init__(self, state_space, actions, learning_rate=0.1, discount_factor=0.99, exploration_rate=1.0, exploration_decay=0.99, state_bins=10):
+    def __init__(self, state_space, actions, learning_rate=0.1, discount_factor=0.99, exploration_rate=0.9, exploration_decay=0.5, state_bins=10):
         super().__init__()
         self.state_space = state_space
         self.actions = actions
@@ -36,3 +36,5 @@ class QLearningAgent(AgentCore):
         best_next_action = np.max(self.q_table[next_state])
         self.q_table[state][action_index] = (1 - self.learning_rate) * self.q_table[state][action_index] + \
             self.learning_rate * (reward + self.discount_factor * best_next_action)
+        
+        print(self.q_table)

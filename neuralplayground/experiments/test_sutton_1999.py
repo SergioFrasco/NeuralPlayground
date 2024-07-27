@@ -28,7 +28,7 @@ actions = ['up', 'down', 'left', 'right']
 agent = QLearningAgent(state_space=state_space, actions=actions, state_bins=10)
 
 # Number of steps to simulate
-n_steps = 3000
+n_steps = 20000
 
 # Initialize environment
 obs, state = env.reset()
@@ -41,6 +41,10 @@ for i in range(n_steps):
     obs, state, reward = env.step(action_vector)
     # Update Q-table based on action outcome
     agent.update_q_table(state, action, reward, obs)
+
+    # Decay exploration rate
+    agent.exploration_rate *= agent.exploration_decay
+    print("exploration rate: ", agent.exploration_rate)
 
 ax = env.plot_trajectory()
 ax.grid()

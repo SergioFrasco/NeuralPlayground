@@ -109,6 +109,7 @@ class sutton_1999(Simple2D):
         observation = self.make_observation()
         self._increase_global_step()
         reward = self.reward_function(action, self.state)
+        # print(reward)
         transition = {
             "action": action,
             "state": self.state,
